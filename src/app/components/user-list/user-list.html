@@ -1,0 +1,23 @@
+<div>
+    <span class="tagline">{{ subtitle }}</span>
+     <div class="stats">
+        <span class="user-count">Usuarios: {{ totalCount() }}</span>
+    </div>
+</div>
+<div>
+    @for (user of filteredUsers(); track user.id){
+    <app-user-card 
+        [user]="user" 
+        (onToggleStatus)="toggleUserStatus($event)" 
+        (onDelete)="deleteUser($event)">
+    </app-user-card>
+        <p>{{ user.nombre}} </p>
+        <p>{{ user.apellido}} </p>
+        <p>{{ user.email}} </p>
+        <p>{{ user.isActive}} </p>
+        <hr>
+    }
+    @empty{
+        <p>No hay usuarios para mostrar</p>
+    }
+</div>

@@ -1,0 +1,110 @@
+<app-navbar></app-navbar>
+
+<main class="quien-soy-main">
+  <div class="container">
+
+    @if (githubService.loading()) {
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">Cargando datos de GitHub...</p>
+    </div>
+    }
+
+    @if (githubService.error()) {
+    <div class="error-container">
+      <span class="error-icon">⚠</span>
+      <p>{{ githubService.error() }}</p>
+    </div>
+    }
+
+    @if (githubService.userData(); as user) {
+    <!-- Profile Header -->
+    <section class="profile-header">
+      <div class="profile-avatar-wrapper">
+        <img [src]="user.avatar_url" [alt]="user.login" class="profile-avatar" />
+        <div class="avatar-ring"></div>
+      </div>
+
+      <div class="profile-info">
+        <div class="profile-badge">GitHub Profile</div>
+        <h1 class="profile-name">{{ user.name || user.login }}</h1>
+        <p class="profile-username">&#64;{{ user.login }}</p>
+
+        @if (user.bio) {
+        <p class="profile-bio">{{ user.bio }}</p>
+        }
+
+        <div class="profile-meta">
+          @if (user.location) {
+          <span class="meta-item">
+            <span class="meta-icon">📍</span>
+            {{ user.location }}
+          </span>
+          }
+          @if (user.company) {
+          <span class="meta-item">
+            <span class="meta-icon">🏢</span>
+            {{ user.company }}
+          </span>
+          }
+          @if (user.blog) {
+          <span class="meta-item">
+            <span class="meta-icon">🔗</span>
+            <a [href]="user.blog" target="_blank" rel="noopener">{{ user.blog }}</a>
+          </span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-value">{{ user.public_repos }}</span>
+        <span class="stat-label">Repositorios</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ user.followers }}</span>
+        <span class="stat-label">Seguidores</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ user.following }}</span>
+        <span class="stat-label">Siguiendo</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value">{{ user.created_at | date:'yyyy' }}</span>
+        <span class="stat-label">En GitHub desde</span>
+      </div>
+    </section>
+
+    <!-- About Card -->
+    <section class="about-section">
+      <div class="about-card">
+        <h2 class="about-title">Sobre este proyecto</h2>
+        <p class="about-text">
+          Este proyecto fue desarrollado como parte de la materia
+          <strong>Programación IV</strong> de la facultad. Utiliza <strong>Angular 21</strong>
+          con standalone components, signals, y consume la <strong>API pública de GitHub</strong>
+          para mostrar datos del desarrollador en tiempo real.
+          En este proyecto vamos a desarrollar varios juegos para su goce tales como: Ahorcado; Mayor o menor;
+          Preguntados y Truco.
+        </p>
+        <div class="tech-tags">
+          <span class="tag">Angular 21</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">GitHub API</span>
+          <span class="tag">SSR</span>
+          <span class="tag">Signals</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- GitHub Link -->
+    <div class="github-link-container">
+      <a [href]="user.html_url" target="_blank" rel="noopener" class="github-link">
+        Ver perfil completo en GitHub →
+      </a>
+    </div>
+    }
+  </div>
+</main>
