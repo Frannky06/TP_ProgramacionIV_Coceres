@@ -2,6 +2,58 @@
 
 <main class="home-main">
   <div class="container">
-    <h1>Home</h1>
+    @if (authService.loading()) {
+      <div class="loading-container" style="text-align: center; margin-top: 4rem;">
+        <p>Cargando sesión...</p>
+      </div>
+    } @else {
+      @if (authService.isLoggedIn()) {
+        <section class="hero" style="text-align: center; margin-top: 2rem;">
+          <h1 class="hero-title">
+            Bienvenido, <span class="gradient-text">{{ authService.currentUserProfile()?.nombre || authService.currentUser()?.email }}</span>
+          </h1>
+          <p class="hero-subtitle">¿A qué querés jugar hoy?</p>
+          <button (click)="logout()" class="submit-btn" style="width: auto; padding: 0.5rem 1rem; margin-top: 1rem; background: transparent; border: 1px solid #ff6b6b; color: #ff6b6b;">Cerrar Sesión</button>
+        </section>
+
+        <section class="games-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 3rem;">
+          <div class="game-card" style="background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+            <h3>Ahorcado</h3>
+            <a routerLink="/game/ahorcado" class="submit-btn" style="margin-top: 1rem; display: inline-block; text-decoration: none;">Jugar</a>
+          </div>
+          <div class="game-card" style="background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⚖️</div>
+            <h3>Mayor o Menor</h3>
+            <a routerLink="/game/mayor-menor" class="submit-btn" style="margin-top: 1rem; display: inline-block; text-decoration: none;">Jugar</a>
+          </div>
+          <div class="game-card" style="background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">❓</div>
+            <h3>Preguntados</h3>
+            <a routerLink="/game/preguntados" class="submit-btn" style="margin-top: 1rem; display: inline-block; text-decoration: none;">Jugar</a>
+          </div>
+          <div class="game-card" style="background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🃏</div>
+            <h3>Truco</h3>
+            <a routerLink="/game/truco" class="submit-btn" style="margin-top: 1rem; display: inline-block; text-decoration: none;">Jugar</a>
+          </div>
+        </section>
+
+      } @else {
+        <section class="hero" style="text-align: center; margin-top: 4rem;">
+          <div class="hero-badge" style="margin-bottom: 1rem; display: inline-block;">Sprint 2 · Programación IV</div>
+          <h1 class="hero-title">
+            Bienvenido a <span class="gradient-text">Gameroom</span>
+          </h1>
+          <p class="hero-subtitle">
+            Para acceder a los juegos y listados, por favor iniciá sesión o registrate.
+          </p>
+          <div class="auth-buttons" style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+            <a routerLink="/login" class="submit-btn" style="width: auto; padding: 0.8rem 2rem; text-decoration: none; display: inline-block;">Iniciar Sesión</a>
+            <a routerLink="/registro" class="submit-btn" style="width: auto; padding: 0.8rem 2rem; background: transparent; border: 1px solid #6c63ff; color: white; text-decoration: none; display: inline-block;">Registrarse</a>
+          </div>
+        </section>
+      }
+    }
   </div>
 </main>
