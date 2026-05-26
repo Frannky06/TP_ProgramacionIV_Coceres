@@ -1,0 +1,35 @@
+@if (authService.isLoggedIn()) {
+  <div class="chat-wrapper" [class.open]="isOpen">
+    <div class="chat-header" (click)="toggleChat()">
+      <span class="chat-title">
+        💬 Sala de Chat
+      </span>
+      <span class="toggle-icon">{{ isOpen ? '▼' : '▲' }}</span>
+    </div>
+
+    @if (isOpen) {
+      <div class="chat-body">
+        <div class="messages-container" #scrollMe>
+          @for (msg of chatService.messages(); track msg.id) {
+            <div class="message" [class.own]="msg.user_id === authService.currentUser()?.id">
+              <div class="msg-sender">{{ msg.users?.nombre || msg.users?.correo || 'Usuario' }}</div>
+              <div class="msg-text">{{ msg.text }}</div>
+              <div class="msg-time">{{ msg.created_at | date:'shortTime' }}</div>
+            </div>
+          }
+        </div>
+        
+        <div class="chat-input-area">
+          <input 
+            type="text" 
+            [(ngModel)]="newMessage" 
+            (keyup.enter)="sendMessage()"
+            placeholder="Escribe un mensaje..."
+            class="chat-input"
+          >
+          <button (click)="sendMessage()" class="send-btn" [disabled]="!newMessage.trim()">Enviar</button>
+        </div>
+      </div>
+    }
+  </div>
+}

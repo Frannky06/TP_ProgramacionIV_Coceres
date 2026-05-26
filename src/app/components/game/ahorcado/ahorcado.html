@@ -1,1 +1,37 @@
-<p>ahorcado works!</p>
+<app-navbar></app-navbar>
+
+<div class="game-container">
+  <div class="game-card">
+    <h1 class="title">Ahorcado</h1>
+    
+    <div class="hangman-drawing">
+      <img [src]="'assets/ahorcado/h' + wrongLetters.length + '.png'" alt="Ahorcado" onerror="this.style.display='none'">
+      <div class="error-count">Errores: {{ wrongLetters.length }} / {{ maxAttempts }}</div>
+    </div>
+
+    <div class="word-display">
+      {{ displayWord }}
+    </div>
+
+    @if (gameStatus === 'playing') {
+      <div class="keyboard">
+        @for (letter of alphabet; track letter) {
+          <button 
+            class="key-btn" 
+            [disabled]="guessedLetters.includes(letter) || wrongLetters.includes(letter)"
+            [class.correct]="guessedLetters.includes(letter)"
+            [class.wrong]="wrongLetters.includes(letter)"
+            (click)="guessLetter(letter)">
+            {{ letter }}
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="result-message" [class.won]="gameStatus === 'won'" [class.lost]="gameStatus === 'lost'">
+        <h2>{{ gameStatus === 'won' ? '¡Ganaste!' : 'Perdiste' }}</h2>
+        <p>La palabra era: <strong>{{ word }}</strong></p>
+        <button class="play-again-btn" (click)="startGame()">Jugar de Nuevo</button>
+      </div>
+    }
+  </div>
+</div>

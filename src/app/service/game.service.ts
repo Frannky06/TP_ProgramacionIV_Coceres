@@ -1,0 +1,25 @@
+import { Injectable } from '@angular/core';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { environment } from '../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class GameService {
+  private supabase: SupabaseClient;
+
+  constructor() {
+    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+  }
+
+  async saveScore(userId: string, gameName: string, scoreDetails: string) {
+    const { error } = await this.supabase
+      .from('game_scores')
+      .insert({ user_id: userId, game_name: gameName, score: scoreDetails });
+      
+    if (error) {
+      console.error('Error guardando score:', error);
+      throw error;
+    }
+  }
+}
