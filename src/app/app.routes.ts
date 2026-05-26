@@ -9,6 +9,7 @@ import { Ahorcado } from './components/game/ahorcado/ahorcado';
 import { MayorMenor } from './components/game/mayor-menor/mayor-menor';
 import { Preguntados } from './components/game/preguntados/preguntados';
 import { Truco } from './components/game/truco/truco';
+import { ResultadosComponent } from './components/resultados/resultados';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -20,5 +21,6 @@ export const routes: Routes = [
   { path: 'game/mayor-menor', component: MayorMenor, canActivate: [authGuard] },
   { path: 'game/preguntados', component: Preguntados, canActivate: [authGuard] },
   { path: 'game/truco', component: Truco, canActivate: [authGuard] },
+  { path: 'resultados', component: ResultadosComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'home' }
 ];

@@ -22,4 +22,17 @@ export class GameService {
       throw error;
     }
   }
+
+  async getScoresByGame(gameName: string) {
+    const { data, error } = await this.supabase
+      .from('game_scores')
+      .select('*, users(correo, nombre, apellido)')
+      .eq('game_name', gameName);
+      
+    if (error) {
+      console.error(`Error obteniendo scores para ${gameName}:`, error);
+      throw error;
+    }
+    return data;
+  }
 }

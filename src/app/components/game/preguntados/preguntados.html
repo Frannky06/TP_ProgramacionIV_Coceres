@@ -1,1 +1,37 @@
-<p>preguntados works!</p>
+<app-navbar></app-navbar>
+<div class="game-container">
+  <h2>Preguntados</h2>
+  
+  <div *ngIf="loading" class="loading">
+    <p>Cargando preguntas...</p>
+    <div class="spinner"></div>
+  </div>
+
+  <div *ngIf="!loading && !gameOver && questions.length > 0" class="game-board">
+    <div class="score-board">
+      <p>Pregunta: {{ currentQuestionIndex + 1 }} / {{ questions.length }}</p>
+      <p>Aciertos: {{ score }}</p>
+    </div>
+
+    <div class="question-box">
+      <span class="category">{{ questions[currentQuestionIndex].category }}</span>
+      <h3>{{ questions[currentQuestionIndex].question }}</h3>
+    </div>
+
+    <div class="options-container">
+      <button 
+        *ngFor="let option of questions[currentQuestionIndex].options" 
+        class="option-btn"
+        (click)="selectOption(option)"
+      >
+        {{ option }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="gameOver" class="game-over">
+    <h3>¡Juego Terminado!</h3>
+    <p>Has acertado {{ score }} de {{ questions.length }} preguntas.</p>
+    <button class="play-again-btn" (click)="startGame()">Jugar de Nuevo</button>
+  </div>
+</div>

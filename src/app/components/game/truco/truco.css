@@ -1,0 +1,122 @@
+.game-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #115e59; /* Verde mesa de cartas */
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  color: white;
+  text-align: center;
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.score h4 {
+  margin: 0 0 5px 0;
+  color: #fbbf24;
+}
+
+.score p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.status-box {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.game-area {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cards-played, .hand {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  min-height: 120px;
+}
+
+.card {
+  width: 80px;
+  height: 120px;
+  background: white;
+  color: black;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border: 2px solid #ccc;
+}
+
+.player-card-played {
+  border-color: #3b82f6;
+}
+
+.hand-card {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.hand-card:hover {
+  transform: translateY(-10px);
+  border-color: #10b981;
+}
+
+.actions {
+  margin: 20px 0;
+}
+
+.action-btn {
+  padding: 10px 20px;
+  background: #fbbf24;
+  color: #78350f;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn:hover:not(:disabled) {
+  background: #f59e0b;
+  transform: scale(1.05);
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.play-again-btn {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.play-again-btn:hover {
+  background: #2563eb;
+}
