@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -19,13 +19,14 @@ export class RegistroComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.registroForm = this.fb.group({
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
       edad: ['', [Validators.required, Validators.min(1), Validators.max(120)]],
-      correo: ['', [Validators.required, Validators.email]],
+      correo: ['', [Validators.required, Validators.email, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -35,6 +36,7 @@ export class RegistroComponent {
     
     this.loading = true;
     this.errorMessage = '';
+    this.cdr.detectChanges();
     const { correo, password, nombre, apellido, edad } = this.registroForm.value;
 
     try {
@@ -42,9 +44,23 @@ export class RegistroComponent {
       this.router.navigate(['/home']);
     } catch (error: any) {
       console.error(error);
-      this.errorMessage = error.message || 'Error al registrar el usuario. Es posible que el correo ya esté en uso.';
+      let msg = 'Error al registrar el usuario. Es posible que el correo ya esté en uso.';
+      if (error.message) {
+        const errorMsg = error.message.toLowerCase();
+        if (errorMsg.includes('user already registered') || errorMsg.includes('already in use')) {
+          msg = 'El correo electrónico ya está registrado.';
+        } else if (errorMsg.includes('password')) {
+          msg = 'La contraseña es demasiado débil (debe tener al menos 6 caracteres).';
+        } else if (errorMsg.includes('invalid email')) {
+          msg = 'El correo electrónico no es válido.';
+        } else if (errorMsg.includes('rate limit')) {
+          msg = 'Demasiados intentos. Por favor, inténtelo de nuevo más tarde.';
+        }
+      }
+      this.errorMessage = msg;
     } finally {
       this.loading = false;
+      this.cdr.detectChanges();
     }
   }
 }

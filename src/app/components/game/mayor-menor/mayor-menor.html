@@ -1,1 +1,45 @@
-<p>mayor-menor works!</p>
+<app-navbar></app-navbar>
+
+<div class="game-container">
+  <div class="game-card">
+    <h1 class="title">Mayor o Menor</h1>
+    
+    <div class="score-board">
+      Racha de Aciertos: <strong>{{ score }}</strong>
+    </div>
+
+    @if (loading && !currentCard) {
+      <div class="loading-state">Mezclando cartas...</div>
+    } @else if (currentCard) {
+      <div class="card-display">
+        <img [src]="currentCard.image" alt="Carta actual" class="playing-card">
+      </div>
+
+      @if (!gameOver) {
+        <div class="actions">
+          <button 
+            class="action-btn lower" 
+            [disabled]="loading" 
+            (click)="guess('lower')">
+            Menor ⬇️
+          </button>
+          
+          <button 
+            class="action-btn higher" 
+            [disabled]="loading" 
+            (click)="guess('higher')">
+            Mayor ⬆️
+          </button>
+        </div>
+      } @else {
+        <div class="game-over">
+          <h2>¡Perdiste!</h2>
+          <p>La carta mostrada fue la que rompió tu racha.</p>
+          <button class="play-again-btn" (click)="startGame()" [disabled]="loading">
+            Jugar de Nuevo
+          </button>
+        </div>
+      }
+    }
+  </div>
+</div>
