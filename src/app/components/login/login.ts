@@ -51,7 +51,7 @@ export class LoginComponent {
   // Inicio de sesión rápido para pruebas
   async quickLogin(type: 'admin' | 'user' | 'tester') {
     let email = '';
-    // NOTA: Asegurate de registrar estos usuarios en tu proyecto con la clave 123456
+    // NOTA: Asegurate de registrar estos usuarios en el proyecto con la clave 123456
     let pass = '123456';
 
     if (type === 'admin') email = 'admin1@userhub.com';

@@ -1,0 +1,118 @@
+<app-navbar></app-navbar>
+
+<div class="resultados-container">
+  <h2>Resultados de Juegos</h2>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando resultados...</p>
+  </div>
+
+  <div *ngIf="!loading" class="tables-grid">
+    
+    <!-- Tabla Mayor Menor -->
+    <div class="game-table-container">
+      <h3>Mayor o Menor</h3>
+      <table class="game-table">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Jugador</th>
+            <th>Resultado</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of mayorMenorScores; let i = index">
+            <td>#{{ i + 1 }}</td>
+            <td>{{ getUserName(entry) }}</td>
+            <td>{{ entry.score }}</td>
+            <td>{{ entry.created_at | date:'short' }}</td>
+          </tr>
+          <tr *ngIf="mayorMenorScores.length === 0">
+            <td colspan="4" class="no-data">Sin partidas jugadas aún.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tabla Preguntados -->
+    <div class="game-table-container">
+      <h3>Preguntados</h3>
+      <table class="game-table">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Jugador</th>
+            <th>Resultado</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of preguntadosScores; let i = index">
+            <td>#{{ i + 1 }}</td>
+            <td>{{ getUserName(entry) }}</td>
+            <td>{{ entry.score }}</td>
+            <td>{{ entry.created_at | date:'short' }}</td>
+          </tr>
+          <tr *ngIf="preguntadosScores.length === 0">
+            <td colspan="4" class="no-data">Sin partidas jugadas aún.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tabla Truco -->
+    <div class="game-table-container">
+      <h3>Truco Argentino</h3>
+      <table class="game-table">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Jugador</th>
+            <th>Resultado</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of trucoScores; let i = index">
+            <td>#{{ i + 1 }}</td>
+            <td>{{ getUserName(entry) }}</td>
+            <td>{{ entry.score }}</td>
+            <td>{{ entry.created_at | date:'short' }}</td>
+          </tr>
+          <tr *ngIf="trucoScores.length === 0">
+            <td colspan="4" class="no-data">Sin partidas jugadas aún.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tabla Ahorcado -->
+    <div class="game-table-container">
+      <h3>Ahorcado</h3>
+      <table class="game-table">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Jugador</th>
+            <th>Resultado</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of ahorcadoScores; let i = index">
+            <td>#{{ i + 1 }}</td>
+            <td>{{ getUserName(entry) }}</td>
+            <td>{{ entry.score }}</td>
+            <td>{{ entry.created_at | date:'short' }}</td>
+          </tr>
+          <tr *ngIf="ahorcadoScores.length === 0">
+            <td colspan="4" class="no-data">Sin partidas jugadas aún.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

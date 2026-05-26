@@ -1,1 +1,66 @@
-<p>truco works!</p>
+<app-navbar></app-navbar>
+<div class="game-container">
+  <h2>Truco Argentino (Simulado a 15 pts)</h2>
+  
+  <div class="scoreboard">
+    <div class="score">
+      <h4>Tú</h4>
+      <p>{{ playerPoints }}</p>
+    </div>
+    <div class="score">
+      <h4>Máquina</h4>
+      <p>{{ machinePoints }}</p>
+    </div>
+  </div>
+
+  <div class="status-box">
+    <p>{{ statusMessage }}</p>
+  </div>
+
+  <div *ngIf="!gameOver" class="game-area">
+    
+    <div class="machine-area">
+      <h4>Cartas Máquina (Restantes: {{ machineHand.length }})</h4>
+      <div class="cards-played">
+        <div class="card" *ngFor="let card of machinePlayedCards">
+          {{ card.number }} <br> {{ card.suit }}
+        </div>
+      </div>
+    </div>
+
+    <div class="player-area">
+      <h4>Tus Cartas Jugadas</h4>
+      <div class="cards-played">
+        <div class="card player-card-played" *ngFor="let card of playerPlayedCards">
+          {{ card.number }} <br> {{ card.suit }}
+        </div>
+      </div>
+    </div>
+
+    <div class="actions" *ngIf="!roundOver">
+      <button 
+        class="action-btn" 
+        (click)="cantarEnvido()" 
+        [disabled]="envidoPlayed || playerPlayedCards.length > 0">
+        Cantar Envido
+      </button>
+    </div>
+
+    <div class="hand-area" *ngIf="!roundOver">
+      <h4>Tu Mano (Haz click para jugar)</h4>
+      <div class="hand">
+        <div class="card hand-card" *ngFor="let card of playerHand; let i = index" (click)="playCard(i)">
+          {{ card.number }} <br> {{ card.suit }}
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="gameOver" class="game-over">
+    <h3>Partida Finalizada</h3>
+    <button class="play-again-btn" (click)="playerPoints=0; machinePoints=0; gameOver=false; startRound()">
+      Volver a Jugar
+    </button>
+  </div>
+</div>
