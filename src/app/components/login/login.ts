@@ -51,7 +51,6 @@ export class LoginComponent {
   // Inicio de sesión rápido para pruebas
   async quickLogin(type: 'admin' | 'user' | 'tester') {
     let email = '';
-    // NOTA: Asegurate de registrar estos usuarios en el proyecto con la clave 123456
     let pass = '123456';
 
     if (type === 'admin') email = 'admin1@userhub.com';
@@ -59,6 +58,28 @@ export class LoginComponent {
     if (type === 'tester') email = 'tester@userhub.com';
 
     this.loginForm.patchValue({ correo: email, password: pass });
-    await this.onSubmit();
+    
+    this.loading = true;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+
+    try {
+      await this.authService.login(email, pass);
+      this.router.navigate(['/home']);
+    } catch (error: any) {
+      // Si el usuario no existe, lo creamos automáticamente para facilitar el testeo
+      try {
+        const perfil = type === 'admin' ? 'admin' : 'usuario';
+        await this.authService.register(email, pass, type.toUpperCase(), 'Test', 25, perfil);
+        await this.authService.login(email, pass); // Aseguramos el login tras registro
+        this.router.navigate(['/home']);
+      } catch (e) {
+        console.error('Error auto-creando usuario:', e);
+        this.errorMessage = 'No se pudo iniciar sesión ni crear el usuario rápido. Verifica tu conexión.';
+      }
+    } finally {
+      this.loading = false;
+      this.cdr.detectChanges();
+    }
   }
 }

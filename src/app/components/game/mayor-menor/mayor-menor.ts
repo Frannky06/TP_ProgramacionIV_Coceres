@@ -4,12 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import { GameService } from '../../../service/game.service';
 import { AuthService } from '../../../service/auth.service';
 import { NavbarComponent } from '../../navbar/navbar';
+import { RouterLink } from '@angular/router';
 import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-mayor-menor',
   standalone: true,
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule, NavbarComponent, RouterLink],
   templateUrl: './mayor-menor.html',
   styleUrl: './mayor-menor.css',
 })
@@ -17,8 +18,10 @@ export class MayorMenor implements OnInit {
   deckId: string = '';
   currentCard: any = null;
   score: number = 0;
+  lives: number = 3;
   gameOver: boolean = false;
   loading: boolean = false;
+  lastResult: 'win' | 'lose' | 'tie' | null = null;
   
   cardValues: { [key: string]: number } = {
     '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10,
@@ -39,8 +42,10 @@ export class MayorMenor implements OnInit {
   async startGame() {
     this.loading = true;
     this.score = 0;
+    this.lives = 3;
     this.gameOver = false;
     this.currentCard = null;
+    this.lastResult = null;
     this.cdr.detectChanges();
     
     try {
@@ -66,7 +71,6 @@ export class MayorMenor implements OnInit {
     try {
       const res: any = await lastValueFrom(this.http.get(`https://deckofcardsapi.com/api/deck/${this.deckId}/draw/?count=1`));
       
-      // If deck is empty, shuffle it again or just end. We'll end for simplicity if no cards.
       if (!res.cards || res.cards.length === 0) {
         this.finishGame();
         return;
@@ -76,17 +80,25 @@ export class MayorMenor implements OnInit {
       const currentValue = this.cardValues[this.currentCard.value];
       const nextValue = this.cardValues[nextCard.value];
 
-      let wonRound = false;
-      // Allow tie to be a win to make it less frustrating
-      if (choice === 'higher' && nextValue >= currentValue) wonRound = true;
-      if (choice === 'lower' && nextValue <= currentValue) wonRound = true;
-
       this.currentCard = nextCard;
 
-      if (wonRound) {
-        this.score++;
+      if (nextValue === currentValue) {
+        this.lastResult = 'tie';
       } else {
-        this.finishGame();
+        let wonRound = false;
+        if (choice === 'higher' && nextValue > currentValue) wonRound = true;
+        if (choice === 'lower' && nextValue < currentValue) wonRound = true;
+
+        if (wonRound) {
+          this.score++;
+          this.lastResult = 'win';
+        } else {
+          this.lives--;
+          this.lastResult = 'lose';
+          if (this.lives <= 0) {
+            this.finishGame();
+          }
+        }
       }
     } catch (error) {
       console.error(error);
@@ -110,3 +122,4 @@ export class MayorMenor implements OnInit {
     }
   }
 }
+

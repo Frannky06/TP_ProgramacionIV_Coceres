@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { GameService } from '../../../service/game.service';
 import { AuthService } from '../../../service/auth.service';
 import { NavbarComponent } from '../../navbar/navbar';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-ahorcado',
   standalone: true,
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule, NavbarComponent, RouterLink],
   templateUrl: './ahorcado.html',
   styleUrl: './ahorcado.css',
 })
@@ -20,6 +21,7 @@ export class Ahorcado implements OnInit {
   gameStatus: 'playing' | 'won' | 'lost' = 'playing';
   alphabet: string[] = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
   startTime: number = 0;
+  score: number = 0; // Number of words guessed correctly
 
   constructor(
     private gameService: GameService,
@@ -32,11 +34,17 @@ export class Ahorcado implements OnInit {
   }
 
   startGame() {
+    this.score = 0;
+    this.wrongLetters = [];
+    this.startTime = Date.now();
+    this.nextWord();
+  }
+
+  nextWord() {
     this.word = this.words[Math.floor(Math.random() * this.words.length)];
     this.guessedLetters = [];
-    this.wrongLetters = [];
     this.gameStatus = 'playing';
-    this.startTime = Date.now();
+    this.cdr.detectChanges();
   }
 
   guessLetter(letter: string) {
@@ -45,7 +53,12 @@ export class Ahorcado implements OnInit {
     if (this.word.includes(letter)) {
       this.guessedLetters.push(letter);
       if (this.checkWin()) {
-        this.finishGame('won');
+        this.score++;
+        this.gameStatus = 'won'; // Temporarily to show success message if needed, or just immediately next word
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.nextWord();
+        }, 1000);
       }
     } else {
       this.wrongLetters.push(letter);
@@ -67,7 +80,7 @@ export class Ahorcado implements OnInit {
     const user = this.authService.currentUser();
     
     if (user) {
-      const scoreData = `Resultado: ${status === 'won' ? 'Victoria' : 'Derrota'}, Tiempo: ${timeTaken}s, Aciertos: ${this.guessedLetters.length}, Errores: ${this.wrongLetters.length}`;
+      const scoreData = `Resultado: ${status === 'won' ? 'Victoria' : 'Derrota'}, Tiempo: ${timeTaken}s, Aciertos: ${this.score}, Errores: ${this.wrongLetters.length}`;
       try {
         await this.gameService.saveScore(user.id, 'ahorcado', scoreData);
       } catch (e) {

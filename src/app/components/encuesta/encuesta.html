@@ -1,0 +1,300 @@
+<app-navbar></app-navbar>
+
+<main class="encuesta-main" @fadeSlideIn>
+  <div class="encuesta-wrapper">
+
+    <div class="encuesta-header">
+      <div class="header-icon">📋</div>
+      <h1 class="encuesta-title">Encuesta de Satisfacción</h1>
+      <p class="encuesta-subtitle">Tus respuestas nos ayudan a mejorar la experiencia de juego</p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-error" @fadeSlideIn>
+        <span class="alert-icon">⚠️</span>
+        {{ errorMessage }}
+      </div>
+    }
+
+    @if (successMessage) {
+      <div class="alert alert-success" @fadeSlideIn>
+        <span class="alert-icon">✅</span>
+        {{ successMessage }}
+        <p class="redirect-note">Redirigiendo al inicio en 3 segundos...</p>
+      </div>
+    }
+
+    @if (!successMessage) {
+      <form [formGroup]="encuestaForm" (ngSubmit)="onSubmit()" @staggerList>
+
+        <!-- Sección: Datos Personales -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">1</span>
+            <h2 class="section-title">Datos Personales</h2>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre" class="form-label">
+                <span class="label-icon">👤</span> Nombre <span class="required">*</span>
+              </label>
+              <input
+                id="nombre"
+                type="text"
+                formControlName="nombre"
+                class="form-control"
+                [class.is-invalid]="f['nombre'].touched && f['nombre'].invalid"
+                placeholder="Tu nombre"
+                autocomplete="given-name"
+              >
+              @if (f['nombre'].touched && f['nombre'].errors?.['required']) {
+                <span class="error-text">El nombre es requerido</span>
+              }
+              @if (f['nombre'].touched && f['nombre'].errors?.['minlength']) {
+                <span class="error-text">Mínimo 2 caracteres</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="apellido" class="form-label">
+                <span class="label-icon">👤</span> Apellido <span class="required">*</span>
+              </label>
+              <input
+                id="apellido"
+                type="text"
+                formControlName="apellido"
+                class="form-control"
+                [class.is-invalid]="f['apellido'].touched && f['apellido'].invalid"
+                placeholder="Tu apellido"
+                autocomplete="family-name"
+              >
+              @if (f['apellido'].touched && f['apellido'].errors?.['required']) {
+                <span class="error-text">El apellido es requerido</span>
+              }
+              @if (f['apellido'].touched && f['apellido'].errors?.['minlength']) {
+                <span class="error-text">Mínimo 2 caracteres</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="edad" class="form-label">
+                <span class="label-icon">🎂</span> Edad <span class="required">*</span>
+              </label>
+              <input
+                id="edad"
+                type="number"
+                formControlName="edad"
+                class="form-control"
+                [class.is-invalid]="f['edad'].touched && f['edad'].invalid"
+                placeholder="Ej: 25"
+                min="18"
+                max="99"
+              >
+              @if (f['edad'].touched && f['edad'].errors?.['required']) {
+                <span class="error-text">La edad es requerida</span>
+              }
+              @if (f['edad'].touched && (f['edad'].errors?.['min'] || f['edad'].errors?.['max'])) {
+                <span class="error-text">Debe tener entre 18 y 99 años</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label for="telefono" class="form-label">
+                <span class="label-icon">📱</span> Teléfono <span class="required">*</span>
+              </label>
+              <input
+                id="telefono"
+                type="text"
+                formControlName="telefono"
+                class="form-control"
+                [class.is-invalid]="f['telefono'].touched && f['telefono'].invalid"
+                placeholder="Ej: 1123456789"
+                maxlength="10"
+              >
+              @if (f['telefono'].touched && f['telefono'].errors?.['required']) {
+                <span class="error-text">El teléfono es requerido</span>
+              }
+              @if (f['telefono'].touched && f['telefono'].errors?.['pattern']) {
+                <span class="error-text">Solo números, máximo 10 dígitos</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección: Pregunta 1 - Juego Favorito (Radio buttons) -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">2</span>
+            <h2 class="section-title">¿Cuál es tu juego favorito?</h2>
+          </div>
+
+          <div class="form-group">
+            <div class="radio-group">
+              <label class="radio-label" [class.selected]="f['juego_favorito'].value === 'Ahorcado'">
+                <input type="radio" formControlName="juego_favorito" value="Ahorcado" id="radio-ahorcado">
+                <span class="radio-custom"></span>
+                <span class="radio-icon">🔤</span> Ahorcado
+              </label>
+              <label class="radio-label" [class.selected]="f['juego_favorito'].value === 'Mayor Menor'">
+                <input type="radio" formControlName="juego_favorito" value="Mayor Menor" id="radio-mayor">
+                <span class="radio-custom"></span>
+                <span class="radio-icon">🃏</span> Mayor o Menor
+              </label>
+              <label class="radio-label" [class.selected]="f['juego_favorito'].value === 'Preguntados'">
+                <input type="radio" formControlName="juego_favorito" value="Preguntados" id="radio-preg">
+                <span class="radio-custom"></span>
+                <span class="radio-icon">❓</span> Preguntados
+              </label>
+              <label class="radio-label" [class.selected]="f['juego_favorito'].value === 'Truco'">
+                <input type="radio" formControlName="juego_favorito" value="Truco" id="radio-truco">
+                <span class="radio-custom"></span>
+                <span class="radio-icon">🤙</span> Truco Argentino
+              </label>
+            </div>
+            @if (f['juego_favorito'].touched && f['juego_favorito'].invalid) {
+              <span class="error-text">Selecciona tu juego favorito</span>
+            }
+          </div>
+        </div>
+
+        <!-- Sección: Pregunta 2 - Frecuencia de juego (Select) -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">3</span>
+            <h2 class="section-title">¿Con qué frecuencia juegas?</h2>
+          </div>
+
+          <div class="form-group">
+            <label for="frecuencia_juego" class="form-label">
+              <span class="label-icon">⏰</span> Frecuencia de juego <span class="required">*</span>
+            </label>
+            <select
+              id="frecuencia_juego"
+              formControlName="frecuencia_juego"
+              class="form-control form-select"
+              [class.is-invalid]="f['frecuencia_juego'].touched && f['frecuencia_juego'].invalid"
+            >
+              <option value="">-- Seleccioná una opción --</option>
+              @for (freq of frecuencias; track freq) {
+                <option [value]="freq">{{ freq }}</option>
+              }
+            </select>
+            @if (f['frecuencia_juego'].touched && f['frecuencia_juego'].invalid) {
+              <span class="error-text">Selecciona tu frecuencia de juego</span>
+            }
+          </div>
+        </div>
+
+        <!-- Sección: Pregunta 3 - Características valoradas (Checkboxes) -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">4</span>
+            <h2 class="section-title">¿Qué características valorás más? <span class="required">*</span></h2>
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-grid">
+              <label class="checkbox-label" [class.selected]="f['valora_diseno'].value">
+                <input type="checkbox" formControlName="valora_diseno" id="cb-diseno">
+                <span class="checkbox-custom"></span>
+                <span class="checkbox-icon">🎨</span>
+                <span>Diseño visual</span>
+              </label>
+              <label class="checkbox-label" [class.selected]="f['valora_dificultad'].value">
+                <input type="checkbox" formControlName="valora_dificultad" id="cb-dificultad">
+                <span class="checkbox-custom"></span>
+                <span class="checkbox-icon">🧠</span>
+                <span>Dificultad</span>
+              </label>
+              <label class="checkbox-label" [class.selected]="f['valora_variedad'].value">
+                <input type="checkbox" formControlName="valora_variedad" id="cb-variedad">
+                <span class="checkbox-custom"></span>
+                <span class="checkbox-icon">🎮</span>
+                <span>Variedad de juegos</span>
+              </label>
+              <label class="checkbox-label" [class.selected]="f['valora_multijugador'].value">
+                <input type="checkbox" formControlName="valora_multijugador" id="cb-multi">
+                <span class="checkbox-custom"></span>
+                <span class="checkbox-icon">👥</span>
+                <span>Multijugador</span>
+              </label>
+            </div>
+            @if (noCheckboxSelected) {
+              <span class="error-text">Seleccioná al menos una característica</span>
+            }
+          </div>
+        </div>
+
+        <!-- Sección: Pregunta 4 - Sugerencia (Textarea) -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">5</span>
+            <h2 class="section-title">¿Qué mejorarías de la plataforma?</h2>
+          </div>
+
+          <div class="form-group">
+            <label for="sugerencia" class="form-label">
+              <span class="label-icon">💡</span> Sugerencia <span class="required">*</span>
+            </label>
+            <textarea
+              id="sugerencia"
+              formControlName="sugerencia"
+              class="form-control"
+              [class.is-invalid]="f['sugerencia'].touched && f['sugerencia'].invalid"
+              rows="4"
+              placeholder="Cuéntanos qué podríamos mejorar..."
+            ></textarea>
+            @if (f['sugerencia'].touched && f['sugerencia'].errors?.['required']) {
+              <span class="error-text">La sugerencia es requerida</span>
+            }
+            @if (f['sugerencia'].touched && f['sugerencia'].errors?.['minlength']) {
+              <span class="error-text">Mínimo 10 caracteres</span>
+            }
+          </div>
+        </div>
+
+        <!-- Sección: Pregunta 5 - Recomendaría (Checkbox único) -->
+        <div class="form-section">
+          <div class="section-header">
+            <span class="section-number">6</span>
+            <h2 class="section-title">¿Recomendarías esta plataforma?</h2>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label-large" [class.selected]="f['recomienda'].value">
+              <input type="checkbox" formControlName="recomienda" id="cb-recomienda">
+              <span class="checkbox-custom"></span>
+              <span>Sí, recomendaría esta aplicación a mis amigos</span>
+            </label>
+            @if (f['recomienda'].touched && f['recomienda'].invalid) {
+              <span class="error-text">Debes marcar esta opción para continuar</span>
+            }
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="form-actions">
+          <a routerLink="/home" class="btn-cancel">Cancelar</a>
+          <button
+            type="submit"
+            class="btn-submit"
+            [class.loading]="loading"
+            [disabled]="loading"
+            id="btn-enviar-encuesta"
+          >
+            @if (loading) {
+              <span class="spinner-sm"></span> Enviando...
+            } @else {
+              📤 Enviar Encuesta
+            }
+          </button>
+        </div>
+
+      </form>
+    }
+
+  </div>
+</main>

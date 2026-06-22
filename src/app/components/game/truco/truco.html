@@ -1,15 +1,21 @@
 <app-navbar></app-navbar>
 <div class="game-container">
-  <h2>Truco Argentino (Simulado a 15 pts)</h2>
+  <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+      <h2 style="margin: 0;">Truco Argentino</h2>
+      <button routerLink="/home" style="background: #ef4444; color: white; padding: 6px 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Salir</button>
+    </div>
+    <div class="timer">{{ formattedTime }}</div>
+  </div>
   
   <div class="scoreboard">
     <div class="score">
       <h4>Tú</h4>
-      <p>{{ playerPoints }}</p>
+      <p>{{ playerPoints }} / 15</p>
     </div>
     <div class="score">
       <h4>Máquina</h4>
-      <p>{{ machinePoints }}</p>
+      <p>{{ machinePoints }} / 15</p>
     </div>
   </div>
 
@@ -17,50 +23,68 @@
     <p>{{ statusMessage }}</p>
   </div>
 
-  <div *ngIf="!gameOver" class="game-area">
-    
-    <div class="machine-area">
-      <h4>Cartas Máquina (Restantes: {{ machineHand.length }})</h4>
-      <div class="cards-played">
-        <div class="card" *ngFor="let card of machinePlayedCards">
-          {{ card.number }} <br> {{ card.suit }}
+  @if (!gameOver) {
+    <div class="game-area">
+      
+      <div class="machine-area">
+        <h4>Cartas Máquina (Restantes: {{ machineHand.length }})</h4>
+        <div class="cards-played">
+          @for (card of machinePlayedCards; track card) {
+            <div class="card machine-card">
+              <span class="number">{{ card.number }}</span>
+              <span class="icon">{{ card.icon }}</span>
+            </div>
+          }
         </div>
       </div>
-    </div>
 
-    <div class="player-area">
-      <h4>Tus Cartas Jugadas</h4>
-      <div class="cards-played">
-        <div class="card player-card-played" *ngFor="let card of playerPlayedCards">
-          {{ card.number }} <br> {{ card.suit }}
+      <div class="player-area">
+        <h4>Tus Cartas Jugadas</h4>
+        <div class="cards-played">
+          @for (card of playerPlayedCards; track card) {
+            <div class="card player-card-played">
+              <span class="number">{{ card.number }}</span>
+              <span class="icon">{{ card.icon }}</span>
+            </div>
+          }
         </div>
       </div>
-    </div>
 
-    <div class="actions" *ngIf="!roundOver">
-      <button 
-        class="action-btn" 
-        (click)="cantarEnvido()" 
-        [disabled]="envidoPlayed || playerPlayedCards.length > 0">
-        Cantar Envido
+      @if (!roundOver) {
+        <div class="actions">
+          <button 
+            class="action-btn envido-btn" 
+            (click)="cantarEnvido()" 
+            [disabled]="envidoPlayed || playerPlayedCards.length > 0">
+            Cantar Envido
+          </button>
+          
+          <button 
+            class="action-btn fold-btn" 
+            (click)="irseAlMazo()">
+            Irse al Mazo
+          </button>
+        </div>
+
+        <div class="hand-area">
+          <h4>Tu Mano (Haz click para jugar)</h4>
+          <div class="hand">
+            @for (card of playerHand; track card; let i = $index) {
+              <div class="card hand-card" (click)="playCard(i)">
+                <span class="number">{{ card.number }}</span>
+                <span class="icon">{{ card.icon }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="game-over">
+      <h3>Partida Finalizada</h3>
+      <button class="play-again-btn" (click)="startGame()">
+        Volver a Jugar
       </button>
     </div>
-
-    <div class="hand-area" *ngIf="!roundOver">
-      <h4>Tu Mano (Haz click para jugar)</h4>
-      <div class="hand">
-        <div class="card hand-card" *ngFor="let card of playerHand; let i = index" (click)="playCard(i)">
-          {{ card.number }} <br> {{ card.suit }}
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div *ngIf="gameOver" class="game-over">
-    <h3>Partida Finalizada</h3>
-    <button class="play-again-btn" (click)="playerPoints=0; machinePoints=0; gameOver=false; startRound()">
-      Volver a Jugar
-    </button>
-  </div>
+  }
 </div>

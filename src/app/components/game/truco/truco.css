@@ -2,39 +2,63 @@
   max-width: 800px;
   margin: 40px auto;
   padding: 30px;
-  background: #115e59; /* Verde mesa de cartas */
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  color: white;
+  background: var(--bg-card, #115e59);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
   text-align: center;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  margin: 0;
+  color: var(--accent-primary);
+}
+
+.timer {
+  font-size: 1.5rem;
+  font-family: monospace;
+  background: var(--bg-input);
+  padding: 5px 15px;
+  border-radius: var(--radius-sm);
+  color: var(--accent-success);
+  font-weight: bold;
 }
 
 .scoreboard {
   display: flex;
   justify-content: space-around;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--bg-input);
   padding: 15px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   margin-bottom: 20px;
 }
 
 .score h4 {
   margin: 0 0 5px 0;
-  color: #fbbf24;
+  color: var(--text-secondary);
 }
 
 .score p {
   font-size: 1.5rem;
   font-weight: bold;
   margin: 0;
+  color: var(--accent-secondary);
 }
 
 .status-box {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-input);
   padding: 15px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   margin-bottom: 20px;
   font-weight: bold;
+  border-left: 4px solid var(--accent-primary);
 }
 
 .game-area {
@@ -50,52 +74,83 @@
   min-height: 120px;
 }
 
+/* Card Design */
 .card {
   width: 80px;
   height: 120px;
-  background: white;
-  color: black;
+  background: #fff;
+  color: #333;
   border-radius: 8px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 10px 0;
   font-weight: bold;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  border: 2px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border: 2px solid #ddd;
+  position: relative;
+}
+
+.card .number {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.card .icon {
+  font-size: 2rem;
 }
 
 .player-card-played {
-  border-color: #3b82f6;
+  border-color: var(--accent-primary);
+}
+
+.machine-card {
+  border-color: var(--accent-danger);
 }
 
 .hand-card {
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform var(--transition-fast);
 }
 
 .hand-card:hover {
-  transform: translateY(-10px);
-  border-color: #10b981;
+  transform: translateY(-15px);
+  border-color: var(--accent-success);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
 .actions {
   margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }
 
 .action-btn {
-  padding: 10px 20px;
-  background: #fbbf24;
-  color: #78350f;
+  padding: 12px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-weight: bold;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: all 0.2s;
+  color: var(--text-on-accent);
+  transition: all var(--transition-fast);
 }
 
-.action-btn:hover:not(:disabled) {
-  background: #f59e0b;
+.envido-btn {
+  background: var(--accent-primary);
+}
+.envido-btn:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+  transform: scale(1.05);
+}
+
+.fold-btn {
+  background: var(--accent-danger);
+}
+.fold-btn:hover:not(:disabled) {
+  filter: brightness(1.2);
   transform: scale(1.05);
 }
 
@@ -107,16 +162,16 @@
 .play-again-btn {
   margin-top: 20px;
   padding: 12px 30px;
-  background: #3b82f6;
-  color: white;
+  background: var(--accent-success);
+  color: var(--text-on-accent);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
 }
 
 .play-again-btn:hover {
-  background: #2563eb;
+  filter: brightness(1.1);
 }
