@@ -4,48 +4,62 @@
   align-items: center;
   min-height: calc(100vh - 70px);
   padding: 20px;
-  background-color: var(--background, #f5f5f5);
+  background-color: var(--bg-primary);
 }
 
 .game-card {
-  background: white;
-  border-radius: 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
   padding: 30px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md);
   text-align: center;
   max-width: 500px;
   width: 100%;
 }
 
 .title {
-  color: var(--primary, #0d6efd);
+  color: var(--accent-primary);
   margin-bottom: 10px;
 }
 
-.score-board {
+.stats-board {
+  display: flex;
+  justify-content: space-around;
   font-size: 1.2rem;
   margin-bottom: 25px;
-  color: #495057;
+  color: var(--text-primary);
+  background: var(--bg-input);
+  padding: 10px;
+  border-radius: var(--radius-sm);
 }
 
 .card-display {
-  min-height: 314px; /* Approximate height of playing card image */
+  min-height: 314px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .playing-card {
   width: 200px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  transition: transform var(--transition-normal);
 }
 
 .playing-card:hover {
   transform: translateY(-5px);
 }
+
+.round-result {
+  min-height: 24px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+.text-warning { color: var(--accent-warning); }
+.text-success { color: var(--accent-success); }
+.text-danger { color: var(--accent-danger); }
 
 .actions {
   display: flex;
@@ -59,18 +73,18 @@
   font-size: 1.2rem;
   font-weight: bold;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  color: white;
-  transition: transform 0.2s, opacity 0.2s;
+  color: var(--text-on-accent);
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
 }
 
 .action-btn.lower {
-  background-color: #dc3545;
+  background-color: var(--accent-danger);
 }
 
 .action-btn.higher {
-  background-color: #198754;
+  background-color: var(--accent-success);
 }
 
 .action-btn:hover:not(:disabled) {
@@ -78,16 +92,16 @@
 }
 
 .action-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
 .game-over {
-  background-color: #f8d7da;
-  color: #842029;
+  background-color: rgba(255, 82, 82, 0.2);
+  color: var(--accent-danger);
   padding: 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-top: 20px;
 }
 
@@ -95,13 +109,14 @@
   margin-top: 15px;
   padding: 10px 20px;
   font-size: 1.1rem;
-  background-color: var(--primary, #0d6efd);
-  color: white;
+  background-color: var(--accent-primary);
+  color: var(--text-on-accent);
   border: none;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  transition: background-color var(--transition-fast);
 }
 
 .play-again-btn:hover {
-  background-color: #0b5ed7;
+  background-color: var(--accent-primary-hover);
 }

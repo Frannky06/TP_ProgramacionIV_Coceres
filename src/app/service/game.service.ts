@@ -27,7 +27,9 @@ export class GameService {
     const { data, error } = await this.supabase
       .from('game_scores')
       .select('*, users(correo, nombre, apellido)')
-      .eq('game_name', gameName);
+      .eq('game_name', gameName)
+      .order('created_at', { ascending: false })
+      .limit(10);
       
     if (error) {
       console.error(`Error obteniendo scores para ${gameName}:`, error);

@@ -1,26 +1,20 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login';
-import { RegistroComponent } from './components/registro/registro';
-import { HomeComponent } from './components/home/home';
-import { QuienSoyComponent } from './components/quien-soy/quien-soy';
-import { publicGuard } from './guards/public.guard';
 import { authGuard } from './guards/auth.guard';
-import { Ahorcado } from './components/game/ahorcado/ahorcado';
-import { MayorMenor } from './components/game/mayor-menor/mayor-menor';
-import { Preguntados } from './components/game/preguntados/preguntados';
-import { Truco } from './components/game/truco/truco';
-import { ResultadosComponent } from './components/resultados/resultados';
+import { publicGuard } from './guards/public.guard';
+import { adminGuard } from './guards/admin.guard';
+
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent, canActivate: [publicGuard] },
-  { path: 'registro', component: RegistroComponent, canActivate: [publicGuard] },
-  { path: 'home', component: HomeComponent },
-  { path: 'quien-soy', component: QuienSoyComponent },
-  { path: 'game/ahorcado', component: Ahorcado, canActivate: [authGuard] },
-  { path: 'game/mayor-menor', component: MayorMenor, canActivate: [authGuard] },
-  { path: 'game/preguntados', component: Preguntados, canActivate: [authGuard] },
-  { path: 'game/truco', component: Truco, canActivate: [authGuard] },
-  { path: 'resultados', component: ResultadosComponent, canActivate: [authGuard] },
+  { path: 'login', loadComponent: () => import('./components/login/login').then(m => m.LoginComponent), canActivate: [publicGuard] },
+  { path: 'registro', loadComponent: () => import('./components/registro/registro').then(m => m.RegistroComponent), canActivate: [publicGuard] },
+  { path: 'home', loadComponent: () => import('./components/home/home').then(m => m.HomeComponent) },
+  { path: 'quien-soy', loadComponent: () => import('./components/quien-soy/quien-soy').then(m => m.QuienSoyComponent) },
+  { path: 'game/ahorcado', loadComponent: () => import('./components/game/ahorcado/ahorcado').then(m => m.Ahorcado), canActivate: [authGuard] },
+  { path: 'game/mayor-menor', loadComponent: () => import('./components/game/mayor-menor/mayor-menor').then(m => m.MayorMenor), canActivate: [authGuard] },
+  { path: 'game/preguntados', loadComponent: () => import('./components/game/preguntados/preguntados').then(m => m.Preguntados), canActivate: [authGuard] },
+  { path: 'game/truco', loadComponent: () => import('./components/game/truco/truco').then(m => m.Truco), canActivate: [authGuard] },
+  { path: 'encuesta', loadComponent: () => import('./components/encuesta/encuesta').then(m => m.EncuestaComponent), canActivate: [authGuard] },
+  { path: 'resultados', loadComponent: () => import('./components/resultados/resultados').then(m => m.ResultadosComponent), canActivate: [authGuard] },
   { path: '**', redirectTo: 'home' }
 ];

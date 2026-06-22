@@ -1,24 +1,26 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../../navbar/navbar';
 import { GameService } from '../../../service/game.service';
 import { AuthService } from '../../../service/auth.service';
+import { RouterLink } from '@angular/router';
 
 interface Card {
   number: number;
   suit: 'Espadas' | 'Bastos' | 'Oros' | 'Copas';
   power: number;
   envidoValue: number;
+  icon?: string;
 }
 
 @Component({
   selector: 'app-truco',
   standalone: true,
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule, NavbarComponent, RouterLink],
   templateUrl: './truco.html',
   styleUrl: './truco.css',
 })
-export class Truco implements OnInit {
+export class Truco implements OnInit, OnDestroy {
   deck: Card[] = [];
   playerHand: Card[] = [];
   machineHand: Card[] = [];
@@ -26,9 +28,6 @@ export class Truco implements OnInit {
   playerPoints: number = 0;
   machinePoints: number = 0;
 
-  playerScore: number = 0;
-  machineScore: number = 0;
-  
   playerPlayedCards: Card[] = [];
   machinePlayedCards: Card[] = [];
 
@@ -38,6 +37,17 @@ export class Truco implements OnInit {
   
   envidoPlayed: boolean = false;
 
+  gameStartTime: number = 0;
+  elapsedSeconds: number = 0;
+  timerInterval: any;
+
+  suitIcons = {
+    'Espadas': '🗡️',
+    'Bastos': '🍡',
+    'Oros': '🥇',
+    'Copas': '🍷'
+  };
+
   constructor(
     private gameService: GameService,
     private authService: AuthService,
@@ -45,7 +55,39 @@ export class Truco implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.startGame();
+  }
+
+  ngOnDestroy() {
+    this.stopTimer();
+  }
+
+  startGame() {
+    this.playerPoints = 0;
+    this.machinePoints = 0;
+    this.gameOver = false;
+    this.gameStartTime = Date.now();
+    this.elapsedSeconds = 0;
+    
+    this.stopTimer();
+    this.timerInterval = setInterval(() => {
+      this.elapsedSeconds = Math.floor((Date.now() - this.gameStartTime) / 1000);
+      this.cdr.detectChanges();
+    }, 1000);
+
     this.startRound();
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+  }
+
+  get formattedTime(): string {
+    const m = Math.floor(this.elapsedSeconds / 60).toString().padStart(2, '0');
+    const s = (this.elapsedSeconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   }
 
   generateDeck() {
@@ -73,7 +115,7 @@ export class Truco implements OnInit {
 
         let envidoValue = num >= 10 ? 0 : num;
 
-        this.deck.push({ number: num, suit, power, envidoValue });
+        this.deck.push({ number: num, suit, power, envidoValue, icon: this.suitIcons[suit] });
       }
     }
     // Shuffle
@@ -88,13 +130,12 @@ export class Truco implements OnInit {
     this.machinePlayedCards = [];
     this.envidoPlayed = false;
     this.roundOver = false;
-    this.statusMessage = 'Tu turno. Juega una carta o canta Envido.';
+    this.statusMessage = 'Tu turno. Juega una carta, canta Envido, o vete al mazo.';
     this.cdr.detectChanges();
   }
 
   calculateEnvido(hand: Card[]): number {
     let maxEnvido = 0;
-    // Buscamos pares del mismo palo
     for (let i = 0; i < hand.length; i++) {
       for (let j = i + 1; j < hand.length; j++) {
         if (hand[i].suit === hand[j].suit) {
@@ -103,7 +144,6 @@ export class Truco implements OnInit {
         }
       }
     }
-    // Si no hay par, es la carta más alta
     if (maxEnvido === 0) {
       for (const card of hand) {
         if (card.envidoValue > maxEnvido) maxEnvido = card.envidoValue;
@@ -116,12 +156,12 @@ export class Truco implements OnInit {
     if (this.envidoPlayed || this.playerPlayedCards.length > 0) return;
     this.envidoPlayed = true;
 
-    const machineWants = Math.random() > 0.5; // La máquina decide al azar si quiere
+    const machineWants = Math.random() > 0.5;
     if (machineWants) {
       const pEnvido = this.calculateEnvido(this.playerHand);
       const mEnvido = this.calculateEnvido(this.machineHand);
       
-      if (pEnvido >= mEnvido) { // Gana el que es mano (asumimos player es mano en empate)
+      if (pEnvido >= mEnvido) {
         this.playerPoints += 2;
         this.statusMessage = `Envido: ¡Quiero! Tienes ${pEnvido}, la máquina ${mEnvido}. ¡Ganaste 2 puntos!`;
       } else {
@@ -135,13 +175,26 @@ export class Truco implements OnInit {
     this.checkWinner();
   }
 
+  irseAlMazo() {
+    if (this.roundOver || this.gameOver) return;
+    this.machinePoints += 1; // Simplificado: 1 punto si se va al mazo (sin truco)
+    this.statusMessage = 'Te fuiste al mazo. La máquina gana 1 punto.';
+    this.roundOver = true;
+    this.checkWinner();
+    
+    if (!this.gameOver) {
+      setTimeout(() => {
+        this.startRound();
+      }, 2000);
+    }
+  }
+
   playCard(index: number) {
     if (this.roundOver || this.gameOver) return;
 
     const playedCard = this.playerHand.splice(index, 1)[0];
     this.playerPlayedCards.push(playedCard);
 
-    // Máquina juega carta al azar
     const machineIndex = Math.floor(Math.random() * this.machineHand.length);
     const mPlayedCard = this.machineHand.splice(machineIndex, 1)[0];
     this.machinePlayedCards.push(mPlayedCard);
@@ -212,10 +265,11 @@ export class Truco implements OnInit {
   }
 
   async finishGame() {
+    this.stopTimer();
     const user = this.authService.currentUser();
     if (user) {
       try {
-        await this.gameService.saveScore(user.id, 'truco', `Puntos: ${this.playerPoints}`);
+        await this.gameService.saveScore(user.id, 'truco', `Puntos: ${this.playerPoints}, Tiempo: ${this.elapsedSeconds}s`);
       } catch (e) {
         console.error('Error saving score:', e);
       }

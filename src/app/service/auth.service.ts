@@ -79,28 +79,46 @@ export class AuthService {
     return data;
   }
 
-  async register(email: string, password: string, nombre: string, apellido: string, edad: number) {
-    // 1. Crear el usuario en Supabase Auth
+  async register(email: string, password: string, nombre: string, apellido: string, edad: number, perfil: string = 'usuario') {
+    const role = (perfil || 'usuario').toLowerCase();
+
     const { data: authData, error: authError } = await this.supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          role,
+          perfil: role,
+        },
+      },
     });
-
     if (authError) throw authError;
 
     if (authData.user) {
-      // 2. Guardar los datos extra en la tabla 'users'
-      const { error: dbError } = await this.supabase.from('users').insert({
+      const { error: dbError } = await this.supabase.from('users').upsert({
         id: authData.user.id,
         correo: email,
         nombre: nombre,
         apellido: apellido,
-        edad: edad
-      });
-
+        edad: edad,
+      }, { onConflict: 'id' });
       if (dbError) throw dbError;
+
+      const { error: roleError } = await this.supabase.from('roles').upsert({
+        user_id: authData.user.id,
+        role,
+      }, { onConflict: 'user_id' });
+      if (roleError) throw roleError;
+
+      const { error: metadataError } = await this.supabase.auth.updateUser({
+        data: {
+          role,
+          perfil: role,
+        },
+      });
+      if (metadataError) throw metadataError;
     }
-    
+
     return authData;
   }
 

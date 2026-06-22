@@ -5,6 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import { NavbarComponent } from '../../navbar/navbar';
 import { GameService } from '../../../service/game.service';
 import { AuthService } from '../../../service/auth.service';
+import { RouterLink } from '@angular/router';
 
 interface Question {
   category: string;
@@ -19,7 +20,7 @@ interface Question {
 @Component({
   selector: 'app-preguntados',
   standalone: true,
-  imports: [CommonModule, NavbarComponent],
+  imports: [CommonModule, NavbarComponent, RouterLink],
   templateUrl: './preguntados.html',
   styleUrl: './preguntados.css',
 })

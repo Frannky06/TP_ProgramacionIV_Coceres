@@ -2,11 +2,32 @@
 
 <div class="game-container">
   <div class="game-card">
-    <h1 class="title">Ahorcado</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h1 class="title">Ahorcado</h1>
+      <button routerLink="/home" style="background: #ef4444; color: white; padding: 8px 16px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Salir</button>
+    </div>
     
-    <div class="hangman-drawing">
-      <img [src]="'assets/ahorcado/h' + wrongLetters.length + '.png'" alt="Ahorcado" onerror="this.style.display='none'">
-      <div class="error-count">Errores: {{ wrongLetters.length }} / {{ maxAttempts }}</div>
+    <div class="hangman-display">
+      <div class="hangman-drawing">
+        <div class="gallows">
+          <div class="base"></div>
+          <div class="pole"></div>
+          <div class="top"></div>
+          <div class="rope"></div>
+        </div>
+        <div class="person">
+          @if (wrongLetters.length > 0) { <div class="head"></div> }
+          @if (wrongLetters.length > 1) { <div class="body"></div> }
+          @if (wrongLetters.length > 2) { <div class="arm left"></div> }
+          @if (wrongLetters.length > 3) { <div class="arm right"></div> }
+          @if (wrongLetters.length > 4) { <div class="leg left"></div> }
+          @if (wrongLetters.length > 5) { <div class="leg right"></div> }
+        </div>
+      </div>
+      <div class="stats">
+        <div class="error-count">Errores: {{ wrongLetters.length }} / {{ maxAttempts }}</div>
+        <div class="score-count">Aciertos: {{ score }}</div>
+      </div>
     </div>
 
     <div class="word-display">
@@ -26,10 +47,16 @@
           </button>
         }
       </div>
+    } @else if (gameStatus === 'won') {
+      <div class="result-message won">
+        <h2>¡Correcto!</h2>
+        <p>Pasando a la siguiente palabra...</p>
+      </div>
     } @else {
-      <div class="result-message" [class.won]="gameStatus === 'won'" [class.lost]="gameStatus === 'lost'">
-        <h2>{{ gameStatus === 'won' ? '¡Ganaste!' : 'Perdiste' }}</h2>
+      <div class="result-message lost">
+        <h2>Perdiste</h2>
         <p>La palabra era: <strong>{{ word }}</strong></p>
+        <p>Aciertos totales: <strong>{{ score }}</strong></p>
         <button class="play-again-btn" (click)="startGame()">Jugar de Nuevo</button>
       </div>
     }

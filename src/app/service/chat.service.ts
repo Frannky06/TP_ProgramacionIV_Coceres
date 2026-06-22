@@ -1,4 +1,4 @@
-import { Injectable, signal, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, Inject, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
@@ -17,9 +17,10 @@ export interface ChatMessage {
 @Injectable({
   providedIn: 'root'
 })
-export class ChatService {
+export class ChatService implements OnDestroy {
   private supabase: SupabaseClient;
   public messages = signal<ChatMessage[]>([]);
+  private pollingInterval: any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
@@ -27,6 +28,13 @@ export class ChatService {
     if (isPlatformBrowser(this.platformId)) {
       this.loadMessages();
       this.subscribeToMessages();
+      this.startPolling();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
     }
   }
 
@@ -40,6 +48,13 @@ export class ChatService {
     if (!error && data) {
       this.messages.set(data as ChatMessage[]);
     }
+  }
+
+  private startPolling() {
+    // Polling de respaldo cada 5 segundos
+    this.pollingInterval = setInterval(() => {
+      this.loadMessages();
+    }, 5000);
   }
 
   private subscribeToMessages() {
@@ -62,7 +77,11 @@ export class ChatService {
       .single();
       
     if (!error && data) {
-      this.messages.update(msgs => [...msgs, data as ChatMessage]);
+      this.messages.update(msgs => {
+        // Evitar duplicados si el polling y el websocket traen el mismo mensaje
+        if (msgs.some(m => m.id === data.id)) return msgs;
+        return [...msgs, data as ChatMessage];
+      });
     }
   }
 
