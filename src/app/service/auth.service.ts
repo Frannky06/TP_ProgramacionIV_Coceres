@@ -1,6 +1,7 @@
 import { Injectable, signal, computed, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+type AdminCheckableUser = Pick<User, 'id' | 'app_metadata' | 'user_metadata'>;
 import { environment } from '../../environments/environment';
 
 export interface UserProfile {
@@ -125,5 +126,27 @@ export class AuthService {
   async logout() {
     const { error } = await this.supabase.auth.signOut();
     if (error) throw error;
+  }
+
+  async checkIsAdmin(user?: AdminCheckableUser | null): Promise<boolean> {
+    user = user ?? this.currentUser();
+    if (!user) return false;
+
+    const metadataRole =
+      user.app_metadata?.['role'] ??
+      user.user_metadata?.['role'] ??
+      user.user_metadata?.['perfil'];
+
+    if (typeof metadataRole === 'string' && metadataRole.toLowerCase() === 'admin') {
+      return true;
+    }
+
+    const { data, error } = await this.supabase
+      .from('roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    return !error && typeof data?.role === 'string' && data.role.toLowerCase() === 'admin';
   }
 }

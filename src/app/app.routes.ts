@@ -16,5 +16,6 @@ export const routes: Routes = [
   { path: 'game/truco', loadComponent: () => import('./components/game/truco/truco').then(m => m.Truco), canActivate: [authGuard] },
   { path: 'encuesta', loadComponent: () => import('./components/encuesta/encuesta').then(m => m.EncuestaComponent), canActivate: [authGuard] },
   { path: 'resultados', loadComponent: () => import('./components/resultados/resultados').then(m => m.ResultadosComponent), canActivate: [authGuard] },
+  { path: 'resultados/encuestas', loadComponent: () => import('./components/resultados-encuestas/resultados-encuestas').then(m => m.ResultadosEncuestasComponent), canActivate: [authGuard, adminGuard] },
   { path: '**', redirectTo: 'home' }
 ];
