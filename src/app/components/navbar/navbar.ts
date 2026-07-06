@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 
@@ -10,7 +10,18 @@ import { AuthService } from '../../service/auth.service';
   styleUrl: './navbar.css'
 })
 export class NavbarComponent {
-  constructor(public authService: AuthService, private router: Router) {}
+  isAdmin = signal(false);
+
+  constructor(public authService: AuthService, private router: Router) {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (!user) {
+        this.isAdmin.set(false);
+        return;
+      }
+      this.authService.checkIsAdmin().then(result => this.isAdmin.set(result));
+    });
+  }
 
   async logout() {
     await this.authService.logout();

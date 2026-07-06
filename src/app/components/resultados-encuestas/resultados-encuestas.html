@@ -1,0 +1,95 @@
+<app-navbar></app-navbar>
+
+<div class="resultados-container" @fadeSlideIn>
+
+  <div class="page-header">
+    <div class="page-icon">📋</div>
+    <h1 class="page-title">Resultados de Encuestas</h1>
+    <p class="page-subtitle">Panel exclusivo para administradores</p>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p>Cargando encuestas...</p>
+    </div>
+  }
+
+  @if (!loading) {
+    <div class="tab-content" @fadeSlideIn>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📝</div>
+          <div class="stat-value">{{ totalEncuestas }}</div>
+          <div class="stat-label">Total encuestas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👍</div>
+          <div class="stat-value">{{ recomiendan }}</div>
+          <div class="stat-label">Recomiendan la app</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🏆</div>
+          <div class="stat-value">{{ juegoFavorito }}</div>
+          <div class="stat-label">Juego más popular</div>
+        </div>
+      </div>
+
+      <!-- Tabla de encuestas -->
+      @if (encuestas.length === 0) {
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3>Sin encuestas todavía</h3>
+          <p>Cuando los usuarios completen la encuesta, aparecerán aquí.</p>
+        </div>
+      } @else {
+        <div class="encuestas-table-wrapper">
+          <table class="encuestas-table" @tableRowsAnim>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Edad</th>
+                <th>Teléfono</th>
+                <th>Juego Favorito</th>
+                <th>Frecuencia</th>
+                <th>Características</th>
+                <th>Recomienda</th>
+                <th>Sugerencia</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (e of encuestas; track e.id; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ e.nombre }}</td>
+                  <td>{{ e.apellido }}</td>
+                  <td>{{ e.edad }}</td>
+                  <td>{{ e.telefono }}</td>
+                  <td><span class="tag">{{ e.juego_favorito }}</span></td>
+                  <td>{{ e.frecuencia_juego }}</td>
+                  <td class="caracteristicas-cell">{{ e.caracteristicas_valoradas || '—' }}</td>
+                  <td>
+                    @if (e.recomienda) {
+                      <span class="badge-yes">✅ Sí</span>
+                    } @else {
+                      <span class="badge-no">❌ No</span>
+                    }
+                  </td>
+                  <td class="sugerencia-cell" [title]="e.sugerencia">{{ e.sugerencia }}</td>
+                  <td>{{ e.created_at | date:'dd/MM/yy' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+    </div>
+  }
+
+</div>
