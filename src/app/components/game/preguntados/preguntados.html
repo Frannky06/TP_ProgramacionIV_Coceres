@@ -22,13 +22,18 @@
     </div>
 
     <div class="options-container">
-      <button 
-        *ngFor="let option of questions[currentQuestionIndex].options" 
+      <button
+        *ngFor="let option of questions[currentQuestionIndex].options"
         class="option-btn"
+        [disabled]="answered"
         (click)="selectOption(option)"
       >
         {{ option }}
       </button>
+    </div>
+
+    <div *ngIf="feedbackMessage" class="feedback-message incorrect">
+      {{ feedbackMessage }}
     </div>
   </div>
 

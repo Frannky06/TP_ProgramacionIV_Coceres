@@ -21,6 +21,9 @@
 
   <div class="status-box">
     <p>{{ statusMessage }}</p>
+    @if (trucoValue > 1) {
+      <p class="truco-value">La mano vale {{ trucoValue }} puntos</p>
+    }
   </div>
 
   @if (!gameOver) {
@@ -52,14 +55,21 @@
 
       @if (!roundOver) {
         <div class="actions">
-          <button 
-            class="action-btn envido-btn" 
-            (click)="cantarEnvido()" 
+          <button
+            class="action-btn envido-btn"
+            (click)="cantarEnvido()"
             [disabled]="envidoPlayed || playerPlayedCards.length > 0">
             Cantar Envido
           </button>
-          
-          <button 
+
+          <button
+            class="action-btn truco-btn"
+            (click)="cantarTruco()"
+            [disabled]="trucoCantado">
+            Cantar Truco
+          </button>
+
+          <button
             class="action-btn fold-btn" 
             (click)="irseAlMazo()">
             Irse al Mazo

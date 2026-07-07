@@ -22,14 +22,18 @@ export class RegistroComponent {
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
+    const nombreApellidoPattern = "^[A-Za-zÁÉÍÓÚÑÜáéíóúñü]+(?:[ '-][A-Za-zÁÉÍÓÚÑÜáéíóúñü]+)*$";
+
     this.registroForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellido: ['', Validators.required],
-      edad: ['', [Validators.required, Validators.min(1), Validators.max(120)]],
+      nombre: ['', [Validators.required, Validators.minLength(2), Validators.pattern(nombreApellidoPattern)]],
+      apellido: ['', [Validators.required, Validators.minLength(2), Validators.pattern(nombreApellidoPattern)]],
+      edad: ['', [Validators.required, Validators.min(18), Validators.max(120)]],
       correo: ['', [Validators.required, Validators.email, Validators.pattern('^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$')]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
+
+  get f() { return this.registroForm.controls; }
 
   async onSubmit() {
     if (this.registroForm.invalid) return;

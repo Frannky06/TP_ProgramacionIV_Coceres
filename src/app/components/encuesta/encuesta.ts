@@ -59,10 +59,12 @@ export class EncuestaComponent {
   ) {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
 
+    const nombreApellidoPattern = "^[A-Za-zÁÉÍÓÚÑÜáéíóúñü]+(?:[ '-][A-Za-zÁÉÍÓÚÑÜáéíóúñü]+)*$";
+
     this.encuestaForm = this.fb.group({
       // Datos personales
-      nombre: ['', [Validators.required, Validators.minLength(2)]],
-      apellido: ['', [Validators.required, Validators.minLength(2)]],
+      nombre: ['', [Validators.required, Validators.minLength(2), Validators.pattern(nombreApellidoPattern)]],
+      apellido: ['', [Validators.required, Validators.minLength(2), Validators.pattern(nombreApellidoPattern)]],
       edad: ['', [Validators.required, Validators.min(18), Validators.max(99)]],
       telefono: ['', [Validators.required, Validators.pattern('^[0-9]{1,10}$')]],
 
