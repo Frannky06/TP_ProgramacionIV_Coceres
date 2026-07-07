@@ -37,6 +37,9 @@ export class Truco implements OnInit, OnDestroy {
   
   envidoPlayed: boolean = false;
 
+  trucoValue: number = 1;
+  trucoCantado: boolean = false;
+
   gameStartTime: number = 0;
   elapsedSeconds: number = 0;
   timerInterval: any;
@@ -129,6 +132,8 @@ export class Truco implements OnInit, OnDestroy {
     this.playerPlayedCards = [];
     this.machinePlayedCards = [];
     this.envidoPlayed = false;
+    this.trucoValue = 1;
+    this.trucoCantado = false;
     this.roundOver = false;
     this.statusMessage = 'Tu turno. Juega una carta, canta Envido, o vete al mazo.';
     this.cdr.detectChanges();
@@ -175,10 +180,42 @@ export class Truco implements OnInit, OnDestroy {
     this.checkWinner();
   }
 
+  cantarTruco() {
+    if (this.trucoCantado || this.roundOver || this.gameOver) return;
+    this.trucoCantado = true;
+
+    const rand = Math.random();
+    if (rand < 0.25) {
+      // No quiero: el que cantó gana 1 punto de inmediato y la mano termina
+      this.playerPoints += 1;
+      this.statusMessage = 'Truco: ¡No quiero! Ganaste 1 punto y la mano termina.';
+      this.roundOver = true;
+      this.checkWinner();
+      if (!this.gameOver) {
+        setTimeout(() => {
+          this.startRound();
+        }, 2000);
+      }
+    } else if (rand < 0.5) {
+      // Quiero: la ronda pasa a valer 2 puntos
+      this.trucoValue = 2;
+      this.statusMessage = 'Truco: ¡Quiero! La mano ahora vale 2 puntos.';
+    } else if (rand < 0.75) {
+      // Retruco: vale 3 puntos
+      this.trucoValue = 3;
+      this.statusMessage = '¡Retruco! La mano ahora vale 3 puntos.';
+    } else {
+      // Quiero vale cuatro: vale 4 puntos
+      this.trucoValue = 4;
+      this.statusMessage = '¡Quiero vale cuatro! La mano ahora vale 4 puntos.';
+    }
+    this.cdr.detectChanges();
+  }
+
   irseAlMazo() {
     if (this.roundOver || this.gameOver) return;
-    this.machinePoints += 1; // Simplificado: 1 punto si se va al mazo (sin truco)
-    this.statusMessage = 'Te fuiste al mazo. La máquina gana 1 punto.';
+    this.machinePoints += this.trucoValue;
+    this.statusMessage = `Te fuiste al mazo. La máquina gana ${this.trucoValue} punto(s).`;
     this.roundOver = true;
     this.checkWinner();
     
@@ -233,11 +270,11 @@ export class Truco implements OnInit, OnDestroy {
 
     if (roundEnded) {
       if (winner === 'player') {
-        this.playerPoints += 1;
-        this.statusMessage += ' ¡Ganaste la mano! (1 punto)';
+        this.playerPoints += this.trucoValue;
+        this.statusMessage += ` ¡Ganaste la mano! (${this.trucoValue} punto${this.trucoValue > 1 ? 's' : ''})`;
       } else {
-        this.machinePoints += 1;
-        this.statusMessage += ' La máquina gana la mano. (1 punto)';
+        this.machinePoints += this.trucoValue;
+        this.statusMessage += ` La máquina gana la mano. (${this.trucoValue} punto${this.trucoValue > 1 ? 's' : ''})`;
       }
 
       this.roundOver = true;

@@ -51,8 +51,8 @@
               @if (f['nombre'].touched && f['nombre'].errors?.['required']) {
                 <span class="error-text">El nombre es requerido</span>
               }
-              @if (f['nombre'].touched && f['nombre'].errors?.['minlength']) {
-                <span class="error-text">Mínimo 2 caracteres</span>
+              @if (f['nombre'].touched && (f['nombre'].errors?.['minlength'] || f['nombre'].errors?.['pattern'])) {
+                <span class="error-text">Ingresá un nombre válido (solo letras, mínimo 2 caracteres)</span>
               }
             </div>
 
@@ -72,8 +72,8 @@
               @if (f['apellido'].touched && f['apellido'].errors?.['required']) {
                 <span class="error-text">El apellido es requerido</span>
               }
-              @if (f['apellido'].touched && f['apellido'].errors?.['minlength']) {
-                <span class="error-text">Mínimo 2 caracteres</span>
+              @if (f['apellido'].touched && (f['apellido'].errors?.['minlength'] || f['apellido'].errors?.['pattern'])) {
+                <span class="error-text">Ingresá un apellido válido (solo letras, mínimo 2 caracteres)</span>
               }
             </div>
           </div>

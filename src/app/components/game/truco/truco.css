@@ -146,6 +146,20 @@
   transform: scale(1.05);
 }
 
+.truco-btn {
+  background: var(--accent-secondary, #d97706);
+}
+.truco-btn:hover:not(:disabled) {
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
+
+.truco-value {
+  margin: 6px 0 0;
+  color: var(--accent-secondary, #d97706);
+  font-weight: bold;
+}
+
 .fold-btn {
   background: var(--accent-danger);
 }

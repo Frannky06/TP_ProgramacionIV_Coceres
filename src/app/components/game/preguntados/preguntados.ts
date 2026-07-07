@@ -30,6 +30,8 @@ export class Preguntados implements OnInit {
   score: number = 0;
   loading: boolean = false;
   gameOver: boolean = false;
+  answered: boolean = false;
+  feedbackMessage: string = '';
   
   constructor(
     private http: HttpClient,
@@ -47,6 +49,8 @@ export class Preguntados implements OnInit {
     this.score = 0;
     this.currentQuestionIndex = 0;
     this.gameOver = false;
+    this.answered = false;
+    this.feedbackMessage = '';
     this.questions = [];
     this.cdr.detectChanges();
 
@@ -87,18 +91,34 @@ export class Preguntados implements OnInit {
   }
 
   selectOption(option: string) {
-    if (this.gameOver) return;
+    if (this.gameOver || this.answered) return;
 
     const currentQuestion = this.questions[this.currentQuestionIndex];
+
     if (option === currentQuestion.correct_answer) {
       this.score++;
+      this.advanceQuestion();
+      return;
     }
 
+    this.answered = true;
+    this.feedbackMessage = `Respuesta Incorrecta! La respuesta es ${currentQuestion.correct_answer}`;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.answered = false;
+      this.feedbackMessage = '';
+      this.advanceQuestion();
+    }, 2000);
+  }
+
+  private advanceQuestion() {
     if (this.currentQuestionIndex < this.questions.length - 1) {
       this.currentQuestionIndex++;
     } else {
       this.finishGame();
     }
+    this.cdr.detectChanges();
   }
 
   async finishGame() {
