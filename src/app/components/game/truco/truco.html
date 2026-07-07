@@ -65,8 +65,8 @@
           <button
             class="action-btn truco-btn"
             (click)="cantarTruco()"
-            [disabled]="trucoCantado">
-            Cantar Truco
+            [disabled]="!trucoDisponible">
+            Cantar {{ trucoBotonLabel }}
           </button>
 
           <button

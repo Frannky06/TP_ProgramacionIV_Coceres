@@ -38,7 +38,8 @@ export class Truco implements OnInit, OnDestroy {
   envidoPlayed: boolean = false;
 
   trucoValue: number = 1;
-  trucoCantado: boolean = false;
+  trucoEsperando: boolean = false;
+  trucoNombres = ['', 'Truco', 'Retruco', 'Vale Cuatro'];
 
   gameStartTime: number = 0;
   elapsedSeconds: number = 0;
@@ -133,7 +134,7 @@ export class Truco implements OnInit, OnDestroy {
     this.machinePlayedCards = [];
     this.envidoPlayed = false;
     this.trucoValue = 1;
-    this.trucoCantado = false;
+    this.trucoEsperando = false;
     this.roundOver = false;
     this.statusMessage = 'Tu turno. Juega una carta, canta Envido, o vete al mazo.';
     this.cdr.detectChanges();
@@ -180,36 +181,47 @@ export class Truco implements OnInit, OnDestroy {
     this.checkWinner();
   }
 
-  cantarTruco() {
-    if (this.trucoCantado || this.roundOver || this.gameOver) return;
-    this.trucoCantado = true;
+  get trucoDisponible(): boolean {
+    return !this.trucoEsperando && this.trucoValue < 4 && !this.roundOver && !this.gameOver;
+  }
 
-    const rand = Math.random();
-    if (rand < 0.25) {
-      // No quiero: el que cantó gana 1 punto de inmediato y la mano termina
-      this.playerPoints += 1;
-      this.statusMessage = 'Truco: ¡No quiero! Ganaste 1 punto y la mano termina.';
-      this.roundOver = true;
-      this.checkWinner();
-      if (!this.gameOver) {
-        setTimeout(() => {
-          this.startRound();
-        }, 2000);
-      }
-    } else if (rand < 0.5) {
-      // Quiero: la ronda pasa a valer 2 puntos
-      this.trucoValue = 2;
-      this.statusMessage = 'Truco: ¡Quiero! La mano ahora vale 2 puntos.';
-    } else if (rand < 0.75) {
-      // Retruco: vale 3 puntos
-      this.trucoValue = 3;
-      this.statusMessage = '¡Retruco! La mano ahora vale 3 puntos.';
-    } else {
-      // Quiero vale cuatro: vale 4 puntos
-      this.trucoValue = 4;
-      this.statusMessage = '¡Quiero vale cuatro! La mano ahora vale 4 puntos.';
-    }
+  get trucoBotonLabel(): string {
+    return this.trucoNombres[this.trucoValue] || '';
+  }
+
+  cantarTruco() {
+    if (!this.trucoDisponible) return;
+
+    const valorPrevio = this.trucoValue;
+    const nuevoValor = this.trucoValue + 1;
+    const canto = this.trucoNombres[nuevoValor - 1];
+
+    this.trucoEsperando = true;
+    this.statusMessage = `Cantaste ${canto}. Esperando respuesta de la máquina...`;
     this.cdr.detectChanges();
+
+    setTimeout(() => {
+      const machineQuiere = Math.random() > 0.35;
+
+      if (machineQuiere) {
+        this.trucoValue = nuevoValor;
+        this.statusMessage = `${canto}: ¡Quiero! La mano ahora vale ${this.trucoValue} puntos.`;
+        this.trucoEsperando = false;
+        this.cdr.detectChanges();
+      } else {
+        // No quiero: el que cantó gana los puntos que valía la mano antes de este canto
+        this.playerPoints += valorPrevio;
+        this.statusMessage = `${canto}: La máquina no quiere. ¡Ganaste ${valorPrevio} punto${valorPrevio > 1 ? 's' : ''} y la mano termina!`;
+        this.trucoEsperando = false;
+        this.roundOver = true;
+        this.checkWinner();
+        if (!this.gameOver) {
+          setTimeout(() => {
+            this.startRound();
+          }, 2000);
+        }
+      }
+    }, 1200);
   }
 
   irseAlMazo() {
